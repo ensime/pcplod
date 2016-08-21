@@ -54,16 +54,14 @@ trait RichishCompilerControl extends CompilerControl {
     Option(tree.tpe)
   }
 
-
   protected def typeAt(p: Position): Option[Type] = {
     wrapTypedTreeAt(p) match {
       case Import(_, _) => symbolAt(p).map(_.tpe)
-      case tree => typeOfTree(tree)
+      case tree         => typeOfTree(tree)
     }
   }
 
-
-    //  def askDocSignatureAtPoint(p: Position): Option[DocSigPair] =
+  //  def askDocSignatureAtPoint(p: Position): Option[DocSigPair] =
   //    askOption {
   //      symbolAt(p).orElse(typeAt(p).map(_.typeSymbol)).flatMap(docSignature(_, Some(p)))
   //    }.flatten
@@ -129,8 +127,8 @@ trait RichishCompilerControl extends CompilerControl {
   //    x.get
   //  }
   //
-//    def askUnloadAllFiles(): Unit = askOption(unloadAllFiles())
-    def askRemoveFile(s: SourceFile): Unit = askOption(removeUnitOf(s))
+  //    def askUnloadAllFiles(): Unit = askOption(unloadAllFiles())
+  def askRemoveFile(s: SourceFile): Unit = askOption(removeUnitOf(s))
   //  def askRemoveAllDeleted(): Option[Unit] = askOption(removeAllDeleted())
   //
   //  def askRemoveDeleted(f: File) = askOption(removeDeleted(AbstractFile.getFile(f)))
@@ -188,9 +186,9 @@ trait RichishCompilerControl extends CompilerControl {
 
   //  def askNotifyWhenReady(): Unit = ask(setNotifyWhenReady)
   //
-    def createSourceFile(path: String) = getSourceFile(path)
-    def createSourceFile(file: AbstractFile) = getSourceFile(file)
-//    def createSourceFile(file: SourceFileInfo) = file match {
+  def createSourceFile(path: String) = getSourceFile(path)
+  def createSourceFile(file: AbstractFile) = getSourceFile(file)
+  //    def createSourceFile(file: SourceFileInfo) = file match {
   //    case SourceFileInfo(f, None, None) => getSourceFile(f.canon.getPath)
   //    case SourceFileInfo(f, Some(contents), None) => new BatchSourceFile(AbstractFile.getFile(f.canon.getPath), contents)
   //    case SourceFileInfo(f, None, Some(contentsIn)) =>
@@ -209,7 +207,6 @@ trait RichishCompilerControl extends CompilerControl {
   //}
 }
 
-
 object RichishPresentationCompiler {
   def create(scalaLibrary: String, compileClasspath: String): RichishPresentationCompiler = {
     val settings = new Settings(s => println("PC: $s"))
@@ -227,9 +224,9 @@ object RichishPresentationCompiler {
 }
 
 class RichishPresentationCompiler(
-                                override val settings: Settings,
-                                val richReporter: Reporter
-                              ) extends Global(settings, richReporter) with RichishCompilerControl {
+  override val settings: Settings,
+  val richReporter: Reporter
+) extends Global(settings, richReporter) with RichishCompilerControl {
 
   def loadFile(path: String, contents: String): BatchSourceFile = {
     val f = new BatchSourceFile(path, contents)
@@ -261,38 +258,37 @@ class RichishPresentationCompiler(
     result.get.fold(o => o, handle)
   }
 
-
   protected def symbolAt(pos: Position): Option[Symbol] = {
     val tree = wrapTypedTreeAt(pos)
     // This code taken mostly verbatim from Scala IDE sources. Licensed
     // under SCALA LICENSE.
     val wannabes =
-    tree match {
-      case Import(expr, selectors) =>
-        if (expr.pos.includes(pos)) {
-          @annotation.tailrec
-          def locate(p: Position, inExpr: Tree): Symbol = inExpr match {
-            case Select(qualifier, name) =>
-              if (qualifier.pos.includes(p)) locate(p, qualifier)
-              else inExpr.symbol
-            case tree => tree.symbol
+      tree match {
+        case Import(expr, selectors) =>
+          if (expr.pos.includes(pos)) {
+            @annotation.tailrec
+            def locate(p: Position, inExpr: Tree): Symbol = inExpr match {
+              case Select(qualifier, name) =>
+                if (qualifier.pos.includes(p)) locate(p, qualifier)
+                else inExpr.symbol
+              case tree => tree.symbol
+            }
+            List(locate(pos, expr))
+          } else {
+            selectors.filter(_.namePos <= pos.point).sortBy(_.namePos).lastOption map { sel =>
+              val tpe = stabilizedType(expr)
+              List(tpe.member(sel.name), tpe.member(sel.name.toTypeName))
+            } getOrElse Nil
           }
-          List(locate(pos, expr))
-        } else {
-          selectors.filter(_.namePos <= pos.point).sortBy(_.namePos).lastOption map { sel =>
-            val tpe = stabilizedType(expr)
-            List(tpe.member(sel.name), tpe.member(sel.name.toTypeName))
-          } getOrElse Nil
-        }
-      case Annotated(atp, _) =>
-        List(atp.symbol)
-      case st: SymTree =>
-        println("DEBUG: using symbol of " + tree.getClass + " tree")
-        List(tree.symbol)
-      case _ =>
-        println("WARN symbolAt for " + tree.getClass + ": " + tree)
-        Nil
-    }
+        case Annotated(atp, _) =>
+          List(atp.symbol)
+        case st: SymTree =>
+          println("DEBUG: using symbol of " + tree.getClass + " tree")
+          List(tree.symbol)
+        case _ =>
+          println("WARN symbolAt for " + tree.getClass + ": " + tree)
+          Nil
+      }
     wannabes.find(_.exists)
   }
 
@@ -301,7 +297,7 @@ class RichishPresentationCompiler(
 
   def askSymbolInfoAt(f: BatchSourceFile, idx: Int): Option[String] = {
     val pos = new OffsetPosition(f, idx)
-    askOption(symbolAt(pos).map{
+    askOption(symbolAt(pos).map {
       (x: Symbol) =>
         // For debugging
         println("-------------------")
@@ -318,11 +314,11 @@ class RichishPresentationCompiler(
     val pos = new OffsetPosition(f, idx)
     askOption(typeAt(pos).map {
       (x: Type) =>
-//        println("=================")
-//        println(x.safeToString)
-//        println(x.toString())
-//        println(x.toLongString)
-//        println(x.directObjectString)
+        //        println("=================")
+        //        println(x.safeToString)
+        //        println(x.toString())
+        //        println(x.toLongString)
+        //        println(x.directObjectString)
         x.safeToString
     }).flatten
   }
