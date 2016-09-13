@@ -111,12 +111,8 @@ withPcPlod(jar) { pc =>
 To add the example compiler plugin example to ENSIME, automatically compiling the plugin first, add this file to your local clone of the repository in `ensime.sbt`
 
 ```scala
-import org.ensime.CommandSupport._
-
-EnsimeKeys.ensimeCompilerArgs <+= state.map { implicit s =>
-  implicit val structure = Project.extract(s).structure
-  implicit val plugin = structure.allProjectRefs.find(_.project == "example").get
-  val jar = (packageBin in plugin in Compile).run
+EnsimeKeys.ensimeCompilerArgs += {
+  val jar = (packageBin in Compile in LocalProject("example")).value
   s"-Xplugin:${jar.getCanonicalPath}"
 }
 ```
