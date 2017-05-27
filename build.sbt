@@ -17,7 +17,7 @@ val common = Seq(
     s"""-Dpcplod.settings=${(scalacOptions in Test).value.mkString(",")}""",
     s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
   ),
-  mimaPreviousArtifacts := Set(organization.value %% name.value % "1.1.0")
+  mimaPreviousArtifacts := Set(organization.value %% name.value % "1.2.0")
 )
 
 lazy val pcplod = project.settings(common)
