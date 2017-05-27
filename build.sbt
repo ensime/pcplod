@@ -1,9 +1,6 @@
-import com.typesafe.sbt.SbtScalariform.ScalariformKeys
-import scalariform.formatter.preferences._
-
 inThisBuild {
   Seq(
-    scalaVersion := "2.11.8",
+    scalaVersion := "2.12.2",
     organization := "org.ensime",
     sonatypeGithub := ("ensime", "pcplod"),
     licenses := Seq(Apache2),
@@ -15,6 +12,7 @@ inThisBuild {
 }
 
 val common = Seq(
+  scalacOptions += "-language:implicitConversions",
   javaOptions in Test ++= Seq(
     s"""-Dpcplod.settings=${(scalacOptions in Test).value.mkString(",")}""",
     s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
@@ -26,6 +24,7 @@ lazy val pcplod = project.settings(common)
 
 lazy val example = project.dependsOn(pcplod % "test").settings(common).settings(
   // too awkward to remove the deprecated warning
+  scalacOptions -= "-deprecated",
   scalacOptions -= "-Xfatal-warnings",
   scalacOptions in Test ++= {
     val jar = (packageBin in Compile).value

@@ -64,7 +64,7 @@ private[pcplod] class PoshPresentationCompiler(
 
   def loadFile(path: String): Unit = {
     val f = createSourceFile(path)
-    askLoadedTyped(f)
+    val _ = askLoadedTyped(f)
   }
 
   def unloadFile(path: String): Unit = {

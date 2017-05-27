@@ -70,7 +70,9 @@ private[pcplod] trait PoshCompilerControl extends CompilerControl {
     }
   }
 
-  def askRemoveFile(s: SourceFile): Unit = askOption(removeUnitOf(s))
+  def askRemoveFile(s: SourceFile): Unit = {
+    val _ = askOption(removeUnitOf(s))
+  }
   def createSourceFile(path: String) = getSourceFile(path)
   def createSourceFile(file: AbstractFile) = getSourceFile(file)
 }
