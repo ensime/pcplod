@@ -13,10 +13,13 @@ inThisBuild {
 
 val common = Seq(
   scalacOptions += "-language:implicitConversions",
-  javaOptions in Test ++= Seq(
-    s"""-Dpcplod.settings=${(scalacOptions in Test).value.mkString(",")}""",
-    s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
-  ),
+  javaOptions in Test ++= {
+    val jar = (packageBin in Compile).value
+    Seq(
+      s"""-Dpcplod.settings=-Xplugin:${jar.getAbsolutePath},-Jdummy=${jar.lastModified}""",
+      s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
+    )
+  },
   mimaPreviousArtifacts := Set(organization.value %% name.value % "1.2.0")
 )
 
