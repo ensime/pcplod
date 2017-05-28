@@ -85,11 +85,6 @@ class NoddyPlugin(override val global: Global) extends Plugin {
     override val phaseName: String = "noddy-params"
     import global._
 
-    // best way to inspect a tree, just call this
-    private def debug(name: String, tree: Tree): Unit = {
-      println(s"$name ${tree.id} ${tree.pos}: ${showCode(tree)}\n${showRaw(tree)}")
-    }
-
     def noddyParameters(mods: global.Modifiers) = {
       mods.annotations.map {
         case ann @ Apply(Select(New(Ident(Noddy)), nme.CONSTRUCTOR), _) =>
