@@ -22,13 +22,11 @@ val common = Seq(
 
 lazy val pcplod = project.settings(common)
 
-lazy val example = project.dependsOn(pcplod % "test").settings(common).settings(
+lazy val example = project.dependsOn(pcplod % "test").settings(
   // too awkward to remove the deprecated warning
-  scalacOptions -= "-deprecated",
   scalacOptions -= "-Xfatal-warnings",
   scalacOptions in Test ++= {
     val jar = (packageBin in Compile).value
     Seq(s"-Xplugin:${jar.getAbsolutePath}", s"-Jdummy=${jar.lastModified}") // ensures recompile
   }
-)
-
+).settings(common)
