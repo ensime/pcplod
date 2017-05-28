@@ -9,7 +9,7 @@ pipeline:
           echo "Please remove TODO or FIXME. Create an issue at GitHub instead." ;
           exit 1 ;
         fi
-      - case $SCALA_VERSION in 2.12*) echo 1.8 > .java-version ; esac ;
+      - case $SCALA_VERSION in 2.1[23]*) echo 1.8 > .java-version ; esac ;
         git update-index --assume-unchanged .java-version
       - sbt ++$SCALA_VERSION ";test:compile ;doc";
         if $(! git diff --exit-code --quiet) ; then
@@ -17,13 +17,14 @@ pipeline:
           git --no-pager diff ;
           exit 1 ;
         fi
-      - sbt ++$SCALA_VERSION ";test" pcplod/mimaReportBinaryIssues
+      - sbt ++$SCALA_VERSION test pcplod/mimaReportBinaryIssues
       - if [ -z "$DRONE_PULL_REQUEST" ] ; then
           sbt ++$SCALA_VERSION pcplod/publish ;
         fi
 
 matrix:
   SCALA_VERSION:
+    - 2.13.0-M1
     - 2.12.2
     - 2.11.11
     - 2.10.6
