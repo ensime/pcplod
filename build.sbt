@@ -6,7 +6,8 @@ inThisBuild {
     licenses := Seq(Apache2),
     libraryDependencies ++= Seq(
       "org.scala-lang" % "scala-compiler" % scalaVersion.value,
-      "org.scala-lang" % "scala-reflect" % scalaVersion.value
+      "org.scala-lang" % "scala-reflect" % scalaVersion.value,
+      "org.scalatest"  %% "scalatest"    % "3.0.4"
     )
   )
 }
@@ -20,7 +21,7 @@ val common = Seq(
       s"""-Dpcplod.classpath=${(fullClasspath in Test).value.map(_.data).mkString(",")}"""
     )
   },
-  mimaPreviousArtifacts := Set(organization.value %% name.value % "1.2.1")
+  mimaPreviousArtifacts := Set(organization.value %% name.value % "1.2.2")
 )
 
 lazy val pcplod = project.settings(common)
