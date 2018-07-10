@@ -84,7 +84,7 @@ class PcPlod(
           PcMessageSeverity.Error
       }
       PcMessage(info.pos.source.file.toString, severity, info.msg)
-    }(collection.breakOut)
+    }.toList
   }
 
   def unloadScala(res: String): Unit = {
