@@ -2,7 +2,6 @@
 // License: http://www.apache.org/licenses/LICENSE-2.0
 package org.ensime.noddy
 
-import scala.collection.breakOut
 import scala.reflect.internal.ModifierFlags
 import scala.reflect.internal.util._
 import scala.tools.nsc._
@@ -231,11 +230,11 @@ class NoddyPlugin(override val global: Global) extends Plugin {
       case t: PackageDef if hasNoddyClasses(t) =>
         val classes: Map[TypeName, ClassDef] = t.stats.collect {
           case c: ClassDef => c.name -> c
-        }(breakOut)
+        }.toMap
 
         val companions: Map[TermName, ModuleDef] = t.stats.collect {
           case m: ModuleDef => m.name -> m
-        }(breakOut)
+        }.toMap
 
         object ClassNoCompanion {
           def unapply(t: Tree): Option[ClassDef] = t match {
